@@ -15,6 +15,8 @@ public:
     {
         static_assert(std::is_integral<TId>::value);
         static_assert(!std::is_same<TId, TValue>::value);
+        char *s = (char*)malloc(100);
+        s++;
     }
 
     // ?: Is this correct?

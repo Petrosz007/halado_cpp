@@ -10,6 +10,19 @@ project(
 set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
+# add_compile_options(-fsanitize=address)
+# add_link_options(-fsanitize=address)
+
+# add_compile_options(-fsanitize=thread)
+# add_link_options(-fsanitize=thread)
+
+# add_compile_options(-fsanitize=memory)
+# add_link_options(-fsanitize=memory)
+
+# add_compile_options(-fsanitize=undefined)
+# add_link_options(-fsanitize=undefined)
+
+
 
 add_subdirectory(src)
 add_subdirectory(extern/catch)
