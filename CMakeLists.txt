@@ -23,7 +23,6 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 # add_link_options(-fsanitize=undefined)
 
 
-
 add_subdirectory(src)
 add_subdirectory(extern/catch)
 add_subdirectory(test)

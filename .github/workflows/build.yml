@@ -54,3 +54,19 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+
+      - name: Test
+        run: |
+          cd build
+          cmake -D COVERAGE=ON --target test_main ..
+          cmake --build . --target test_main --
+          ./test/test_main
+          lcov --directory test --capture --output-file coverage.info
+          
+      - name: Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./build/coverage.info
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
