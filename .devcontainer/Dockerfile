@@ -6,5 +6,5 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
 # ** [Optional] Uncomment this section to install additional packages. **
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends g++ clang cmake ninja-build
+    && apt-get -y install --no-install-recommends g++ clang cmake ninja-build lcov
 
