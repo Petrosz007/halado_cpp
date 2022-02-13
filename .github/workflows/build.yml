@@ -27,6 +27,9 @@ jobs:
       - name: Get specific version CMake, v3.18.3
         uses: lukka/get-cmake@v3.18.3
 
+      - name: Install lcov
+        uses: danielealbano/lcov-action@v1
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -56,7 +59,7 @@ jobs:
           mkdir build
           cmake -S . -B build
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
-          
+
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
