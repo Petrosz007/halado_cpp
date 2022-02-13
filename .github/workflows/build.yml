@@ -75,6 +75,7 @@ jobs:
           cmake -D COVERAGE=ON --target test_main ..
           cmake --build . --target test_main --
           ./test/test_main
+          lcov --directory test --output-file coverage.info --capture
           lcov --directory test --output-file coverage.info --remove coverage.info '*extern/catch/*'
           
       - name: Codecov
