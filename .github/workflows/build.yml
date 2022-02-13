@@ -28,7 +28,9 @@ jobs:
         uses: lukka/get-cmake@v3.18.3
 
       - name: Install lcov
-        uses: danielealbano/lcov-action@v1
+        run: |
+          sudo apt update
+          sudo apt install lcov
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
