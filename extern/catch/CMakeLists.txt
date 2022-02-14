@@ -1,6 +1,6 @@
 project(
-    Catch
-    VERSION 2.13.8
+  Catch
+  VERSION 2.13.8
 )
 
 add_library(catch INTERFACE)

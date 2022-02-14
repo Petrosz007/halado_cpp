@@ -1,14 +1,11 @@
+#include <bimap0.hpp>
 #include <string>
 #include <type_traits>
-
-#include <bimap0.hpp>
 
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 
-
-void F0_types()
-{
+void F0_types() {
 #define NFAIL
 #ifndef NFAIL
   // EXPECT FAIL: Template parameter "value" must always be specified.
@@ -43,10 +40,6 @@ void F0_types()
   static_assert(std::is_same_v<decltype(CTM)::mapped_type, T>);
 }
 
-TEST_CASE("Tests work")
-{
-    SECTION("One")
-    {
-        F0_types();
-    }
+TEST_CASE("Tests work") {
+  SECTION("One") { F0_types(); }
 }
