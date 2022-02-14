@@ -6,16 +6,21 @@
 		"dockerfile": "Dockerfile",
 		// Update 'VARIANT' to pick an Debian version: bullseye, buster
 		// Use bullseye on local arm64/Apple Silicon.
-		"args": { "VARIANT": "bullseye" }
+		"args": { "VARIANT": "bullseye" },
 	},
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	"settings": {
+		"editor.formatOnSave": true,
+	},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-vscode.cpptools-extension-pack",
-		"twxs.cmake"
+		"twxs.cmake",
+		"xaver.clang-format",
+		"EditorConfig.EditorConfig",
+		"aaron-bond.better-comments",
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
