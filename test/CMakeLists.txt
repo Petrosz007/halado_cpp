@@ -1,5 +1,9 @@
+add_library(section_tests STATIC section0_tests.hpp)
+target_include_directories(section_tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(section_tests PUBLIC catch bimap0)
+
 add_executable(test_main test_main.cpp)
-target_link_libraries(test_main PRIVATE catch bimap0)
+target_link_libraries(test_main PRIVATE catch section_tests)
 
 option(COVERAGE "Enable coverage reporting" OFF)
 if(COVERAGE)
