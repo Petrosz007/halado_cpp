@@ -11,10 +11,10 @@ class id_bimap {
 
  public:
   id_bimap() : id_map(), value_map() {
-    static_assert(std::is_integral<TId>::value);
-    static_assert(!std::is_same<TId, TValue>::value);
-    char *s = (char *)malloc(100);
-    s++;
+    static_assert(std::is_integral<TId>::value,
+                  "Id of id_bimap should be an integral type!");
+    static_assert(!std::is_same<TId, TValue>::value,
+                  "The Id and Value of a id_bimap cannot be the same type!");
   }
 
   // ?: Is this correct?
