@@ -1,21 +1,17 @@
 #pragma once
 
+#include <concepts>
 #include <map>
 #include <string>
 
-template <typename TValue, typename TId = std::size_t>
-class id_bimap {
+template <typename TValue, std::integral TId = std::size_t>
+requires(!std::same_as<TValue, TId>) class id_bimap {
  private:
   std::map<TId, TValue> id_map;
   std::map<TValue, TId> value_map;
 
  public:
-  id_bimap() : id_map(), value_map() {
-    static_assert(std::is_integral<TId>::value,
-                  "Id of id_bimap should be an integral type!");
-    static_assert(!std::is_same<TId, TValue>::value,
-                  "The Id and Value of a id_bimap cannot be the same type!");
-  }
+  id_bimap() : id_map(), value_map() {}
 
   // ?: Is this correct?
   id_bimap(const id_bimap &other) noexcept
