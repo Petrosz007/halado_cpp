@@ -6,31 +6,28 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-  sonarcloud:
-    name: Sonarcloud
+  build:
+    name: Build
     runs-on: ubuntu-latest
+    container: andipeter/halado-cpp
     env:
       SONAR_SCANNER_VERSION: 4.6.1.2450 # Find the latest version in the "Linux" link on this page:
                                         # https://sonarcloud.io/documentation/analysis/scan/sonarscanner/
       SONAR_SERVER_URL: "https://sonarcloud.io"
       BUILD_WRAPPER_OUT_DIR: build_wrapper_output_directory # Directory where build-wrapper output will be placed
+      CC: gcc
+      CXX: g++
+      CMAKE_MAKE_PROGRAM: Ninja
+      CMAKE_CXX_COMPILER: g++
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-          
+
       - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
-
-      - name: Get specific version CMake, v3.18.3
-        uses: lukka/get-cmake@v3.18.3
-
-      - name: Install lcov
-        run: |
-          sudo apt update
-          sudo apt install lcov
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -60,7 +57,7 @@ jobs:
         run: |
           mkdir build
           cmake -S . -B build
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build ./build/
 
 
       - name: Test
