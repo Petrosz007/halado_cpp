@@ -11,13 +11,13 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   std::map<TValue, TId> value_map;
 
  public:
-  id_bimap() : id_map(), value_map() {}
+  id_bimap() noexcept : id_map(), value_map() {}
 
-  id_bimap(const id_bimap &other) = default;
+  id_bimap(const id_bimap &other) noexcept = default;
 
-  id_bimap(id_bimap &&other) = default;
+  id_bimap(id_bimap &&other) noexcept = default;
 
-  ~id_bimap() = default;
+  ~id_bimap() noexcept = default;
 
   using mapped_type = TValue;
   using key_type = TId;

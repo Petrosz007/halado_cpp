@@ -69,5 +69,3 @@ TEST_CASE("[S0] Correct types") {
     }
   }
 }
-
-#undef NOFAIL
