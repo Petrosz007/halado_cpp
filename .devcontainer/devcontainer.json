@@ -22,6 +22,7 @@
     "EditorConfig.EditorConfig",
     "aaron-bond.better-comments",
     "eamodio.gitlens",
+    "sleistner.vscode-fileutils",
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],

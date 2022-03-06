@@ -1,8 +1,7 @@
 #pragma once
 
-#include <bimap0.hpp>
-#include <catch.hpp>
 #include <string>
+#include <sut.hpp>
 #include <type_traits>
 
 #define NO_FAIL
@@ -29,7 +28,7 @@ TEST_CASE("[S0] Expect fails") {
 }
 #endif
 
-TEST_CASE("[S0] Corrct types") {
+TEST_CASE("[S0] Correct types") {
   struct T {};
 
   GIVEN("string bimap") {
@@ -70,3 +69,5 @@ TEST_CASE("[S0] Corrct types") {
     }
   }
 }
+
+#undef NOFAIL
