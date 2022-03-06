@@ -13,18 +13,11 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
  public:
   id_bimap() : id_map(), value_map() {}
 
-  // ?: Is this correct?
-  id_bimap(const id_bimap &other) noexcept
-      : id_map(other.id_map), value_map(other.value_map) {}
+  id_bimap(const id_bimap &other) = default;
 
-  // ?: Is this correct?
-  id_bimap(const id_bimap &&other) noexcept
-      : id_map(std::move(other.id_map)),
-        value_map(std::move(other.value_map)) {}
+  id_bimap(id_bimap &&other) = default;
 
-  ~id_bimap() noexcept {
-    // TODO: What should we destruct here?
-  }
+  ~id_bimap() = default;
 
   using mapped_type = TValue;
   using key_type = TId;
