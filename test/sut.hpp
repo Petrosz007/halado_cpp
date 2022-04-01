@@ -1,7 +1,7 @@
 #pragma once
 
 // Replace this with the bimap version you want to use
-constexpr int BIMAP_VERSION = 0;
+#define BIMAP_VERSION 1
 
 #if (BIMAP_VERSION == 0)
 #include <bimap0.hpp>
