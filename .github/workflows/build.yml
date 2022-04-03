@@ -67,7 +67,7 @@ jobs:
           cmake --build . --target test_main --
           ./test/test_main
           lcov --directory test --output-file coverage.info --capture
-          lcov --directory test --output-file coverage.info --remove coverage.info '(*extern/catch/*|*/original_tests/*)'
+          lcov --directory test --output-file coverage.info --remove coverage.info '*extern/catch/*'
           mkdir -p gcov-output
           cd gcov-output
           gcov ../test/CMakeFiles/test_main.dir/test_main.cpp.gcno
