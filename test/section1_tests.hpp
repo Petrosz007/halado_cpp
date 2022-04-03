@@ -54,12 +54,12 @@ TEST_CASE("[S1] Insert and Query") {
     }
 
     WHEN("inserting and querying an element") {
-      auto IR1 = SM.insert("gsd");
+      auto [iterator, did_insert] = SM.insert("gsd");
 
       THEN("the return value is correct") {
-        REQUIRE(IR1.second);
-        REQUIRE(IR1.first->first == 0);
-        REQUIRE(IR1.first->second == "gsd");
+        REQUIRE(did_insert);
+        REQUIRE(iterator->first == 0);
+        REQUIRE(iterator->second == "gsd");
       }
 
       auto S1 = SM[0];
@@ -81,13 +81,13 @@ TEST_CASE("[S1] Insert and Query") {
 
     WHEN("inserting and querying another element") {
       std::string W{"Whisperity"};
-      auto IR2 = SM.insert(W);
+      auto [iterator, did_insert] = SM.insert(W);
 
       THEN("the return value is correct") {
-        REQUIRE(IR2.second);
-        REQUIRE(IR2.first->first == 1);
-        REQUIRE(IR2.first->second == W);
-        REQUIRE(IR2.first->second == "Whisperity");
+        REQUIRE(did_insert);
+        REQUIRE(iterator->first == 1);
+        REQUIRE(iterator->second == W);
+        REQUIRE(iterator->second == "Whisperity");
       }
 
       AND_THEN("querying is idempotent") {
@@ -101,12 +101,12 @@ TEST_CASE("[S1] Insert and Query") {
       }
 
       AND_WHEN("trying a non-unique insertion") {
-        auto IR3 = SM.insert(G);
+        auto [iterator, did_insert] = SM.insert(G);
 
         THEN("the element is not inserted") {
-          REQUIRE_FALSE(IR3.second);
-          REQUIRE(IR3.first->first == 0);
-          REQUIRE(IR3.first->second == "gsd");
+          REQUIRE_FALSE(did_insert);
+          REQUIRE(iterator->first == 0);
+          REQUIRE(iterator->second == "gsd");
           REQUIRE(SM.size() == 2);
         }
       }
@@ -184,13 +184,13 @@ TEST_CASE("[S1] Iterator") {
 
     WHEN("iterating over the map") {
       unsigned short Idx = 0;
-      for (const auto& E : CSM) {
-        if (Idx == 0 && E.first == Idx) {
+      for (const auto& [id, value] : CSM) {
+        if (Idx == 0 && id == Idx) {
           ++Idx;
-          REQUIRE(E.second == G);
-        } else if (Idx == 1 && E.first == Idx) {
+          REQUIRE(value == G);
+        } else if (Idx == 1 && id == Idx) {
           ++Idx;
-          REQUIRE(E.second == W);
+          REQUIRE(value == W);
         } else {
           INFO("Expected only 2 elements in the copy!");
           REQUIRE(false);
@@ -235,7 +235,7 @@ TEST_CASE("[S1] Erase") {
 
 TEST_CASE("[S1] Initialization list") {
   WHEN("initializing an id map with a list") {
-    string_id_bimap SMInit = {"gsd", "Whisperity", "Bjarne", "Herb"};
+    string_id_bimap SMInit{"gsd", "Whisperity", "Bjarne", "Herb"};
 
     THEN("it is initialized correctly") {
       std::ostringstream OSS;

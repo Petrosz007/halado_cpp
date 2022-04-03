@@ -109,7 +109,9 @@ void F1_operations() {
   assert(CSM.size() == 2);
 
   // Initialisation list.
-  string_id_bimap SMInit = {"gsd", "Whisperity", "Bjarne", "Herb"};
+  // REWRITE: removed the assignment, my initializer list constructor is
+  //          explicit
+  string_id_bimap SMInit{"gsd", "Whisperity", "Bjarne", "Herb"};
   std::ostringstream OSS;
   for (const auto& E : SMInit) OSS << E.second << ", ";
   assert(OSS.str() == "gsd, Whisperity, Bjarne, Herb, ");
