@@ -1,10 +1,11 @@
 #pragma once
 
+#include <original_tests/f0.hpp>
 #include <string>
 #include <sut.hpp>
 #include <type_traits>
 
-#define NO_FAIL
+TEST_CASE("[S0] Original Section 0 tests") { F0_types(); }
 
 #ifndef NO_FAIL
 TEST_CASE("[S0] Expect fails") {

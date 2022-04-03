@@ -44,6 +44,12 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   id_bimap(id_bimap&& other) noexcept = default;
 
+  id_bimap(std::initializer_list<TValue> init) noexcept : id_bimap() {
+    for (auto value : init) {
+      insert(value);
+    }
+  }
+
   ~id_bimap() noexcept = default;
 
   using mapped_type = TValue;
