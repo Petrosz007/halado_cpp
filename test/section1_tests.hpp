@@ -226,35 +226,35 @@ TEST_CASE("[S1] Insert and Query") {
   }
 }
 
-// TEST_CASE("[S1] Copy") {
-//   GIVEN("string_id_bimap with 2 elements") {
-//     string_id_bimap SM;
-//     SM.insert("gsd");
-//     SM.insert("Whisperity");
+TEST_CASE("[S1] Copy") {
+  GIVEN("string_id_bimap with 2 elements") {
+    string_id_bimap SM;
+    SM.insert("gsd");
+    SM.insert("Whisperity");
 
-//     WHEN("copying and clearing the map") {
-//       string_id_bimap SM2 = SM;
-//       SM2.clear();
+    WHEN("copying and clearing the map") {
+      string_id_bimap SM2 = SM;
+      SM2.clear();
 
-//       THEN("the new map should be cleared, the old should remain filled") {
-//         REQUIRE(SM2.size() == 0);
-//         REQUIRE(SM2.empty());
-//       }
-//     }
+      THEN("the new map should be cleared, the old should remain filled") {
+        REQUIRE(SM2.size() == 0);
+        REQUIRE(SM2.empty());
+      }
+    }
 
-//     WHEN("copying the map") {
-//       const string_id_bimap CSM = SM;
+    WHEN("copying the map") {
+      const string_id_bimap CSM = SM;
 
-//       THEN("it should copy the elements correctly") {
-//         REQUIRE(CSM.size() == 2);
-//         REQUIRE(!CSM.empty());
-//         REQUIRE(CSM["gsd"] == 0);
-//         REQUIRE(CSM["Whisperity"] == 1);
-//         REQUIRE_THROWS_AS(CSM[CSM["Xazax"]], std::domain_error);
-//       }
-//     }
-//   }
-// }
+      THEN("it should copy the elements correctly") {
+        REQUIRE(CSM.size() == 2);
+        REQUIRE(!CSM.empty());
+        REQUIRE(CSM["gsd"] == 0);
+        REQUIRE(CSM["Whisperity"] == 1);
+        REQUIRE_THROWS_AS(CSM[CSM["Xazax"]], std::domain_error);
+      }
+    }
+  }
+}
 
 // TEST_CASE("[S1] Find") {
 //   GIVEN("string_id_bimap with 2 elements") {
@@ -312,33 +312,38 @@ TEST_CASE("[S1] Iterator") {
   }
 }
 
-// TEST_CASE("[S1] Erase") {
-//   GIVEN("string_id_bimap and copy with 2 elements") {
-//     string_id_bimap SM;
-//     SM.insert("gsd");
-//     SM.insert("Whisperity");
+TEST_CASE("[S1] Erase") {
+  GIVEN("string_id_bimap and copy with 2 elements") {
+    std::string W{"Whisperity"};
+    std::string G{"gsd"};
 
-//     const string_id_bimap CSM = SM;
+    string_id_bimap SM;
+    SM.insert("gsd");
+    SM.insert("Whisperity");
 
-//     WHEN("erasing an element by value") {
-//       SM.erase("gsd");
+    const string_id_bimap CSM = SM;
 
-//       THEN("it is erased correctly") {
-//         REQUIRE(SM.size() == 1);
-//         REQUIRE(CSM[0] == "Whisperity");
-//       }
-//     }
+    WHEN("erasing an element by value") {
+      SM.erase("gsd");
 
-//     WHEN("erasing an element by ID") {
-//       SM.erase(0);
+      THEN("it is erased correctly") {
+        REQUIRE(SM.size() == 1);
+        REQUIRE(CSM.size() == 2);
+        REQUIRE(SM[0] == W);
+        REQUIRE(CSM[0] == G);
+      }
 
-//       THEN("it is erased correctly") {
-//         REQUIRE(SM.empty());
-//         REQUIRE(CSM.size() == 2);
-//       }
-//     }
-//   }
-// }
+      AND_WHEN("erasing an element by ID") {
+        SM.erase(0);
+
+        THEN("it is erased correctly") {
+          REQUIRE(SM.empty());
+          REQUIRE(CSM.size() == 2);
+        }
+      }
+    }
+  }
+}
 
 // TEST_CASE("[S1] Initialization list") {
 //   WHEN("initializing an id map with a list") {

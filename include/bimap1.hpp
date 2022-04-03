@@ -12,6 +12,31 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   std::map<TValue, TId> value_map;
   TId next_id;
 
+  /**
+   * @brief Deletes `id` and shifts every ID greather than this down by one. The
+   * `id` must exist.
+   *
+   * @param id Id to delete
+   */
+  void delete_id_and_shift(const TId& id) {
+    auto value = id_map.at(id);
+
+    id_map.erase(id);
+    value_map.erase(value);
+
+    for (auto i = id + 1; i < next_id; ++i) {
+      auto val = id_map.at(i);
+
+      id_map.erase(i);
+      value_map.erase(val);
+
+      id_map.insert({i - 1, val});
+      value_map.insert({val, i - 1});
+    }
+
+    --next_id;
+  }
+
  public:
   id_bimap() noexcept : id_map(), value_map(), next_id() {}
 
@@ -45,19 +70,46 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     return std::pair{it, true};
   }
 
+  void clear() noexcept {
+    value_map.clear();
+    id_map.clear();
+  }
+
+  std::size_t erase(const TValue& value) {
+    if (!value_map.contains(value)) {
+      return 0;
+    }
+
+    auto id = value_map.at(value);
+    delete_id_and_shift(id);
+
+    return 1;
+  }
+
+  std::size_t erase(const TId& id) {
+    if (!id_map.contains(id)) {
+      return 0;
+    }
+
+    delete_id_and_shift(id);
+
+    return 1;
+  }
+
   // Query
-  std::size_t size() const { return value_map.size(); }
+  std::size_t size() const noexcept { return value_map.size(); }
 
-  bool empty() const { return value_map.empty(); }
+  bool empty() const noexcept { return value_map.empty(); }
 
-  const TId& operator[](const TValue& value) {
+  const TId& operator[](const TValue& value) const {
     if (!value_map.contains(value)) {
       throw std::domain_error{"Value not found in id_map."};
     }
 
     return value_map.at(value);
   }
-  const TValue& operator[](const TId& id) { return id_map.at(id); }
+
+  const TValue& operator[](const TId& id) const { return id_map.at(id); }
 };
 
 template <typename TValue>
