@@ -256,34 +256,34 @@ TEST_CASE("[S1] Copy") {
   }
 }
 
-// TEST_CASE("[S1] Find") {
-//   GIVEN("string_id_bimap with 2 elements") {
-//     string_id_bimap CSM;
-//     SM.insert("gsd");
-//     SM.insert("Whisperity");
+TEST_CASE("[S1] Find") {
+  GIVEN("string_id_bimap with 2 elements") {
+    string_id_bimap CSM;
+    CSM.insert("gsd");
+    CSM.insert("Whisperity");
 
-//     WHEN("finding present elements") {
-//       auto F1 = CSM.find("Whisperity");
-//       auto F2 = CSM.find("gsd");
+    WHEN("finding present elements") {
+      auto F1 = CSM.find("Whisperity");
+      auto F2 = CSM.find("gsd");
 
-//       THEN("they are correctly found") {
-//         REQUIRE(F1 != CSM.end());
-//         REQUIRE(F1->first == 0);
-//         REQUIRE(F1->second == "Whisperity");
+      THEN("they are correctly found") {
+        REQUIRE(F1 != CSM.end());
+        REQUIRE(F1->first == 1);
+        REQUIRE(F1->second == "Whisperity");
 
-//         REQUIRE(F2 != CSM.end());
-//         REQUIRE(F2->first == 1);
-//         REQUIRE(F2->second == "gsd");
-//       }
-//     }
+        REQUIRE(F2 != CSM.end());
+        REQUIRE(F2->first == 0);
+        REQUIRE(F2->second == "gsd");
+      }
+    }
 
-//     WHEN("finding a not present element") {
-//       auto F3 = CSM.find("Xazax");
+    WHEN("finding a not present element") {
+      auto F3 = CSM.find("Xazax");
 
-//       THEN("it is not found") { REQUIRE(F3 == CSM.end()); }
-//     }
-//   }
-// }
+      THEN("it is not found") { REQUIRE(F3 == CSM.end()); }
+    }
+  }
+}
 
 TEST_CASE("[S1] Iterator") {
   GIVEN("string_id_bimap with 2 elements") {

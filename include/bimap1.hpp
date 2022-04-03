@@ -48,14 +48,14 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   using mapped_type = TValue;
   using key_type = TId;
-  using iterator = typename std::map<TId, TValue>::const_iterator;
+  using const_iterator = typename std::map<TId, TValue>::const_iterator;
 
   // Iterators
-  iterator begin() const noexcept { return id_map.begin(); }
-  iterator end() const noexcept { return id_map.end(); }
+  const_iterator begin() const noexcept { return id_map.begin(); }
+  const_iterator end() const noexcept { return id_map.end(); }
 
   // Modify
-  std::pair<iterator, bool> insert(const TValue& value) {
+  std::pair<const_iterator, bool> insert(const TValue& value) {
     if (value_map.contains(value)) {
       auto id = value_map.at(value);
       auto id_it = id_map.find(id);
@@ -110,6 +110,16 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   }
 
   const TValue& operator[](const TId& id) const { return id_map.at(id); }
+
+  const_iterator find(const TValue& value) const {
+    if (!value_map.contains(value)) {
+      return end();
+    }
+    auto id = value_map.at(value);
+    return id_map.find(id);
+  }
+
+  const_iterator find(const TId& id) const { return id_map.find(id); }
 };
 
 template <typename TValue>
