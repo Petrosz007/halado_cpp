@@ -101,12 +101,12 @@ TEST_CASE("[S1] Insert and Query") {
       }
 
       AND_WHEN("trying a non-unique insertion") {
-        auto [iterator, did_insert] = SM.insert(G);
+        auto [iterator2, did_insert2] = SM.insert(G);
 
         THEN("the element is not inserted") {
-          REQUIRE_FALSE(did_insert);
-          REQUIRE(iterator->first == 0);
-          REQUIRE(iterator->second == "gsd");
+          REQUIRE_FALSE(did_insert2);
+          REQUIRE(iterator2->first == 0);
+          REQUIRE(iterator2->second == "gsd");
           REQUIRE(SM.size() == 2);
         }
       }
@@ -192,7 +192,7 @@ TEST_CASE("[S1] Iterator") {
           ++Idx;
           REQUIRE(value == W);
         } else {
-          INFO("Expected only 2 elements in the copy!");
+          INFO("Expected only 2 elements in the copy!")
           REQUIRE(false);
         }
       }
@@ -239,10 +239,8 @@ TEST_CASE("[S1] Initialization list") {
 
     THEN("it is initialized correctly") {
       std::ostringstream OSS;
-      for (const auto& E : SMInit) OSS << E.second << ", ";
+      for (const auto& [_, value] : SMInit) OSS << value << ", ";
       REQUIRE(OSS.str() == "gsd, Whisperity, Bjarne, Herb, ");
     }
   }
 }
-
-#undef NOFAIL
