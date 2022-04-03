@@ -212,9 +212,10 @@ TEST_CASE("[S1] Erase") {
     const string_id_bimap CSM = SM;
 
     WHEN("erasing an element by value") {
-      SM.erase("gsd");
+      auto erase_result = SM.erase("gsd");
 
       THEN("it is erased correctly") {
+        REQUIRE(erase_result == 1);
         REQUIRE(SM.size() == 1);
         REQUIRE(CSM.size() == 2);
         REQUIRE(SM[0] == W);
@@ -222,12 +223,22 @@ TEST_CASE("[S1] Erase") {
       }
 
       AND_WHEN("erasing an element by ID") {
-        SM.erase(0);
+        auto erase_result2 = SM.erase(0);
 
         THEN("it is erased correctly") {
+          REQUIRE(erase_result2 == 1);
           REQUIRE(SM.empty());
           REQUIRE(CSM.size() == 2);
         }
+      }
+    }
+
+    WHEN("erasing a value that doesn't exist") {
+      auto erase_result = SM.erase("non-existent value");
+
+      THEN("nothing happens") {
+        REQUIRE(erase_result == 0);
+        REQUIRE(SM.size() == 2);
       }
     }
   }
