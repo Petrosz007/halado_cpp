@@ -15,9 +15,9 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
  public:
   id_bimap() noexcept : id_map(), value_map(), next_id() {}
 
-  id_bimap(const id_bimap &other) noexcept = default;
+  id_bimap(const id_bimap& other) noexcept = default;
 
-  id_bimap(id_bimap &&other) noexcept = default;
+  id_bimap(id_bimap&& other) noexcept = default;
 
   ~id_bimap() noexcept = default;
 
@@ -29,9 +29,12 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   iterator begin() const noexcept { return id_map.begin(); }
   iterator end() const noexcept { return id_map.end(); }
 
-  std::pair<iterator, bool> insert(const TValue &value) {
+  // Modify
+  std::pair<iterator, bool> insert(const TValue& value) {
     if (value_map.contains(value)) {
-      return std::pair{end(), false};
+      auto id = value_map.at(value);
+      auto id_it = id_map.find(id);
+      return std::pair{id_it, false};
     }
 
     value_map.insert({value, next_id});
@@ -41,6 +44,20 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
     return std::pair{it, true};
   }
+
+  // Query
+  std::size_t size() const { return value_map.size(); }
+
+  bool empty() const { return value_map.empty(); }
+
+  const TId& operator[](const TValue& value) {
+    if (!value_map.contains(value)) {
+      throw std::domain_error{"Value not found in id_map."};
+    }
+
+    return value_map.at(value);
+  }
+  const TValue& operator[](const TId& id) { return id_map.at(id); }
 };
 
 template <typename TValue>
