@@ -1,6 +1,10 @@
+add_library(original_tests STATIC sut.hpp original_tests/f0.hpp original_tests/f1.hpp)
+target_include_directories(original_tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(original_tests PUBLIC catch bimap0 bimap1)
+
 add_library(section_tests STATIC sut.hpp section0_tests.hpp section1_tests.hpp)
 target_include_directories(section_tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(section_tests PUBLIC catch bimap0 bimap1)
+target_link_libraries(section_tests PUBLIC catch bimap0 bimap1 original_tests)
 
 add_executable(test_main test_main.cpp)
 target_link_libraries(test_main PRIVATE catch section_tests)
