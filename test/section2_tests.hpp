@@ -77,11 +77,13 @@ TEST_CASE("[S2] All Tests") {
   REQUIRE(USM.size() == 1 + 64);
 
   const auto& CUSM = USM;
-  auto FIR1 = CUSM.find_if([](auto&& E) -> bool { return *E == "Xazax"; });
+  // REWRITE: auto && -> auto&
+  auto FIR1 = CUSM.find_if([](auto& E) -> bool { return *E == "Xazax"; });
   REQUIRE(FIR1 == CUSM.begin());
   REQUIRE(FIR1 != CUSM.end());
 
-  USM.delete_all([](auto&& E) -> bool {
+  // REWRITE: auto && -> auto&
+  USM.delete_all([](auto& E) -> bool {
     try {
       if (int NumericValue = std::stoi(*E);
           NumericValue % 2 == 1)  // Odd number.
@@ -101,9 +103,9 @@ TEST_CASE("[S2] All Tests") {
 
   int IndexAccumulator = 0;
   std::ostringstream OSS;
-  for (const auto& E : USM) {
-    IndexAccumulator += E.first;  // 0 + 1 + 2 + ... + 32
-    OSS << *E.second << ", ";
+  for (const auto& [id, value] : USM) {
+    IndexAccumulator += id;  // 0 + 1 + 2 + ... + 32
+    OSS << *value << ", ";
   }
   REQUIRE(IndexAccumulator == ((32 * (32 + 1)) / 2));
   REQUIRE(OSS.str() ==

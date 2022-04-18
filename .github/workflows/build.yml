@@ -68,7 +68,7 @@ jobs:
           ./test/test_main
           lcov --directory test --output-file coverage.info --capture
           lcov --directory test --output-file coverage.info --remove coverage.info '*extern/catch/*'
-          lcov --directory test --output-file coverage.info --remove coverage.info '*test/original_tests/*'
+          lcov --directory test --output-file coverage.info --remove coverage.info '*/original_tests/*'
           mkdir -p gcov-output
           cd gcov-output
           gcov ../test/CMakeFiles/test_main.dir/test_main.cpp.gcno
