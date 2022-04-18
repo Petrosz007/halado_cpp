@@ -9,11 +9,11 @@ TEST_CASE("[S2] All Tests") {
   SMFCounter::reset();
 
   id_bimap<SMFCounter> SMFM;
-  auto ER1 = SMFM.emplace(8);  // +1 construction.
+  auto [ER1_it, ER1_inserted] = SMFM.emplace(8);  // +1 construction.
   REQUIRE(SMFM.size() == 1);
-  REQUIRE(ER1.second == true);
-  REQUIRE(ER1.first->first == 0);
-  REQUIRE(ER1.first->second.id() == 8);
+  REQUIRE(ER1_inserted);
+  REQUIRE(ER1_it->first == 0);
+  REQUIRE(ER1_it->second.id() == 8);
 
   REQUIRE(SMFCounter::Ctor == 1);
   REQUIRE(SMFCounter::CCtor == 0);
@@ -63,14 +63,16 @@ TEST_CASE("[S2] All Tests") {
     id_bimap<non_copyable> USMM = std::move(X);
   }
 
-  auto ER2 = USM.emplace(std::make_unique<std::string>("Xazax"));
+  auto [ER2_it, ER2_inserted] =
+      USM.emplace(std::make_unique<std::string>("Xazax"));
   REQUIRE(USM.size() == 1);
-  REQUIRE(ER2.second == true);
-  REQUIRE((*ER2.first->second) == "Xazax");
+  REQUIRE(ER2_inserted);
+  REQUIRE((*ER2_it->second) == "Xazax");
 
   for (int I = 0; I < 64; ++I) {
-    auto ER3 = USM.emplace(std::make_unique<std::string>(std::to_string(I)));
-    REQUIRE(ER3.second == true);
+    auto [_, ER3_inserted] =
+        USM.emplace(std::make_unique<std::string>(std::to_string(I)));
+    REQUIRE(ER3_inserted == true);
   }
   REQUIRE(USM.size() == 1 + 64);
 
@@ -81,8 +83,8 @@ TEST_CASE("[S2] All Tests") {
 
   USM.delete_all([](auto&& E) -> bool {
     try {
-      int NumericValue = std::stoi(*E);
-      if (NumericValue % 2 == 1)  // Odd number.
+      if (int NumericValue = std::stoi(*E);
+          NumericValue % 2 == 1)  // Odd number.
         return true;
       return false;
     } catch (const std::invalid_argument&) {
