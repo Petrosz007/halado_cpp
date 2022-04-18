@@ -20,8 +20,6 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     using difference_type = std::ptrdiff_t;
     using vector_pointer = typename std::vector<TValue>::const_iterator;
     using value_type = std::pair<const TId&, const TValue&>;
-    using pointer = value_type*;
-    using reference = value_type&;
 
     const_iterator(vector_pointer ptr, vector_pointer begin)
         : m_ptr(ptr), m_begin(begin) {
@@ -33,9 +31,9 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
       set_current();
     }
 
-    const reference operator*() const { return *m_current; }
+    const value_type& operator*() const { return *m_current; }
 
-    const pointer operator->() { return &*m_current; }
+    const value_type* operator->() { return &*m_current; }
 
     const_iterator& operator++() {
       m_ptr++;
