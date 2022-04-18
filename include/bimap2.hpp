@@ -20,7 +20,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
    *
    * @param id Id to delete
    */
-  void delete_id_and_shift(const TId& id) {
+  void delete_id_and_shift(const TId id) {
     id_map.erase(id);
 
     for (auto i = id + 1; i < next_id; ++i) {
@@ -108,7 +108,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     return 1;
   }
 
-  std::size_t erase(const TId& id) {
+  std::size_t erase(const TId id) {
     if (!id_map.contains(id)) {
       return 0;
     }
@@ -136,7 +136,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   bool empty() const noexcept { return id_map.empty(); }
 
-  const TId& operator[](const TValue& value) const {
+  const TId operator[](const TValue& value) const {
     const auto& id = id_for_value(value);
     if (!id) {
       throw std::domain_error{"Value not found in id_map."};
@@ -145,7 +145,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     return *id;
   }
 
-  const TValue& operator[](const TId& id) const { return id_map.at(id); }
+  const TValue& operator[](const TId id) const { return id_map.at(id); }
 
   const_iterator find(const TValue& value) const {
     const auto& id = id_for_value(value);
@@ -155,7 +155,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     return id_map.find(*id);
   }
 
-  const_iterator find(const TId& id) const { return id_map.find(id); }
+  const_iterator find(const TId id) const { return id_map.find(id); }
 
   template <typename UnaryPredicate>
   const_iterator find_if(UnaryPredicate predicate) const {
