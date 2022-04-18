@@ -9,3 +9,7 @@
 #if (BIMAP_VERSION >= 1)
 #include <section1_tests.hpp>
 #endif
+
+#if (BIMAP_VERSION >= 2)
+#include <section2_tests.hpp>
+#endif
