@@ -12,21 +12,75 @@
 
 template <typename TValue, std::integral TId = std::size_t>
 requires(!std::same_as<TValue, TId>) class id_bimap {
+ public:
+  // Iterator
+  struct const_iterator {
+   public:
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = std::pair<const TId&, const TValue&>;
+    using vector_pointer = typename std::vector<TValue>::const_iterator;
+    using pointer = value_type*;    // or also value_type*
+    using reference = value_type&;  // or also value_type&
+
+    const_iterator(vector_pointer ptr, vector_pointer begin)
+        : m_ptr(ptr), m_begin(begin) {
+      set_current();
+    }
+
+    const_iterator(const const_iterator& other)
+        : m_ptr(other.m_ptr), m_begin(other.m_begin) {
+      set_current();
+    }
+
+    const_iterator(const_iterator&& other)
+        : m_ptr(other.m_ptr), m_begin(other.m_begin) {
+      set_current();
+    }
+
+    ~const_iterator() = default;
+
+    const value_type& operator*() const { return *m_current; }
+
+    const value_type* operator->() { return &*m_current; }
+
+    const_iterator& operator++() {
+      m_ptr++;
+      set_current();
+      return *this;
+    }
+
+    const_iterator operator++(int) {
+      const_iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }
+
+    friend bool operator==(const const_iterator& a, const const_iterator& b) {
+      return a.m_ptr == b.m_ptr;
+    };
+
+   private:
+    vector_pointer m_ptr;
+    vector_pointer m_begin;
+    TId m_current_id;
+    std::optional<value_type> m_current;
+
+    void set_current() {
+      m_current_id = std::distance(m_begin, m_ptr);
+      m_current.emplace(m_current_id, *m_ptr);
+    }
+  };
+
  private:
   std::vector<TValue> id_map;
 
-  /**
-   * @brief Deletes `id` and shifts every ID greather than this down by one. The
-   * `id` must exist.
-   *
-   * @param id Id to delete
-   */
-  void delete_id_and_shift(const TId id) { id_map.erase(id_map.begin() + id); }
+  void delete_id_and_shift(const TId& id) { id_map.erase(id_map.begin() + id); }
 
   std::optional<TId> id_for_value(const TValue& value_to_search) const {
-    for (TId i = 0; i < id_map.size(); ++i) {
-      if (id_map[i] == value_to_search) {
-        return i;
+    for (const auto& [id, value] : *this) {
+      if (value == value_to_search) {
+        return id;
       }
     }
 
@@ -50,60 +104,6 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   using mapped_type = TValue;
   using key_type = TId;
-  // using const_iterator = typename std::vector<TValue>::const_iterator;
-  struct const_iterator {
-   public:
-    using iterator_category = std::forward_iterator_tag;
-    using difference_type = std::ptrdiff_t;
-    using value_type = std::pair<const TId&, const TValue&>;
-    using vector_pointer = typename std::vector<TValue>::const_iterator;
-    using pointer = value_type*;    // or also value_type*
-    using reference = value_type&;  // or also value_type&
-
-    const_iterator(vector_pointer ptr, vector_pointer begin)
-        : m_ptr(ptr), m_begin(begin) {
-      set_current();
-    }
-
-    const_iterator(const const_iterator& other)
-        : m_ptr(other.m_ptr), m_begin(other.m_begin) {
-      set_current();
-    }
-
-    const value_type& operator*() const { return *m_current; }
-
-    const value_type* operator->() { return &*m_current; }
-
-    const_iterator& operator++() {
-      m_ptr++;
-      set_current();
-      return *this;
-    }
-
-    const_iterator operator++(int) {
-      const_iterator tmp = *this;
-      ++(*this);
-      return tmp;
-    }
-
-    friend bool operator==(const const_iterator& a, const const_iterator& b) {
-      return a.m_ptr == b.m_ptr;
-    };
-    friend bool operator!=(const const_iterator& a, const const_iterator& b) {
-      return a.m_ptr != b.m_ptr;
-    };
-
-   private:
-    vector_pointer m_ptr;
-    vector_pointer m_begin;
-    TId m_current_id;
-    std::optional<value_type> m_current;
-
-    void set_current() {
-      m_current_id = std::distance(m_begin, m_ptr);
-      m_current.emplace(m_current_id, *m_ptr);
-    }
-  };
 
   // Iterators
   const_iterator begin() const noexcept {
@@ -115,8 +115,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   // Modify
   std::pair<const_iterator, bool> insert(const TValue& value) {
-    const auto& id = id_for_value(value);
-    if (id) {
+    if (const auto& id = id_for_value(value)) {
       auto id_it = const_iterator(id_map.begin() + *id, id_map.begin());
       return std::pair{id_it, false};
     }
@@ -129,17 +128,8 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   template <typename... Args>
   std::pair<const_iterator, bool> emplace(Args&&... args) {
-    // const auto& id = id_for_value(value);
-    // if (id) {
-    //   auto id_it = const_iterator(id_map.begin() + *id, id_map.begin());
-    //   return std::pair{id_it, false};
-    // }
-
-    // if constexpr (std::is_copy_constructible<TValue>::value) {
+    // ?: Do we need to check whether the constructed value is in the map?
     id_map.emplace_back(std::forward<Args>(args)...);
-    // } else {
-    // id_map.emplace_back(args);
-    // }
     auto it = const_iterator(id_map.end() - 1, id_map.begin());
 
     return std::pair{it, true};
@@ -158,7 +148,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     return 1;
   }
 
-  std::size_t erase(const TId id) {
+  std::size_t erase(const TId& id) {
     if (id >= id_map.size()) {
       return 0;
     }
@@ -188,7 +178,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   bool empty() const noexcept { return id_map.empty(); }
 
-  const TId operator[](const TValue& value) const {
+  TId operator[](const TValue& value) const {
     const auto& id = id_for_value(value);
     if (!id) {
       throw std::domain_error{"Value not found in id_map."};
@@ -209,7 +199,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   template <typename... Args>
   const_iterator find(Args... args) const {
-    const TValue value = TValue(std::forward<Args>(args)...);
+    const TValue value = TValue(args...);
     return find(value);
   }
 
