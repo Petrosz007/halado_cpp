@@ -18,10 +18,10 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
    public:
     using iterator_category = std::forward_iterator_tag;
     using difference_type = std::ptrdiff_t;
-    using value_type = std::pair<const TId&, const TValue&>;
     using vector_pointer = typename std::vector<TValue>::const_iterator;
-    using pointer = value_type*;    // or also value_type*
-    using reference = value_type&;  // or also value_type&
+    using value_type = std::pair<const TId&, const TValue&>;
+    using pointer = value_type*;
+    using reference = value_type&;
 
     const_iterator(vector_pointer ptr, vector_pointer begin)
         : m_ptr(ptr), m_begin(begin) {
@@ -33,9 +33,9 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
       set_current();
     }
 
-    const value_type& operator*() const { return *m_current; }
+    const reference operator*() const { return *m_current; }
 
-    const value_type* operator->() { return &*m_current; }
+    const pointer operator->() { return &*m_current; }
 
     const_iterator& operator++() {
       m_ptr++;
@@ -69,6 +69,10 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   std::vector<TValue> id_map;
 
   void delete_id_and_shift(const TId& id) { id_map.erase(id_map.begin() + id); }
+
+  const_iterator iterator_for_id(const TId& id) const {
+    return const_iterator(id_map.begin() + id, id_map.begin());
+  }
 
   std::optional<TId> id_for_value(const TValue& value_to_search) const {
     for (const auto& [id, value] : *this) {
@@ -108,13 +112,13 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   // Modify
   std::pair<const_iterator, bool> insert(const TValue& value) {
-    if (const auto& id = id_for_value(value)) {
-      auto id_it = const_iterator(id_map.begin() + *id, id_map.begin());
+    if (const auto& id = id_for_value(value); id) {
+      auto id_it = iterator_for_id(*id);
       return std::pair{id_it, false};
     }
 
     id_map.push_back(value);
-    auto it = const_iterator(id_map.end() - 1, id_map.begin());
+    auto it = iterator_for_id(id_map.size() - 1);
 
     return std::pair{it, true};
   }
@@ -123,7 +127,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
   std::pair<const_iterator, bool> emplace(Args&&... args) {
     // ?: Do we need to check whether the constructed value is in the map?
     id_map.emplace_back(std::forward<Args>(args)...);
-    auto it = const_iterator(id_map.end() - 1, id_map.begin());
+    auto it = iterator_for_id(id_map.size() - 1);
 
     return std::pair{it, true};
   }
@@ -187,7 +191,7 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
     if (!id) {
       return end();
     }
-    return const_iterator(id_map.begin() + *id, id_map.begin());
+    return iterator_for_id(*id);
   }
 
   template <typename... Args>
@@ -198,9 +202,9 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
 
   template <typename UnaryPredicate>
   const_iterator find_if(UnaryPredicate predicate) const {
-    for (TId i = 0; i < id_map.size(); ++i) {
-      if (predicate(id_map[i])) {
-        return const_iterator(id_map.begin() + i, id_map.begin());
+    for (const auto& [id, value] : *this) {
+      if (predicate(value)) {
+        return iterator_for_id(id);
       }
     }
     return end();
