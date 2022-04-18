@@ -28,6 +28,11 @@ requires(!std::same_as<TValue, TId>) class id_bimap {
       set_current();
     }
 
+    const_iterator(const const_iterator& other)
+        : m_ptr(other.m_ptr), m_begin(other.m_begin) {
+      set_current();
+    }
+
     const value_type& operator*() const { return *m_current; }
 
     const value_type* operator->() { return &*m_current; }
